@@ -8,15 +8,16 @@ def make_public_tag(tag):
     for field in tag.serialise:
         if field == 'id':
             new_tag['uri'] = url_for('get_tag', tag_id=tag.id, _external=True)
-        else:
-            new_tag[field] = tag.serialise[field]
+        new_tag[field] = tag.serialise[field]
     return new_tag
 
+# List tags
 @app.route('/assured/api/v1.0/tags', methods=['GET'])
 def get_tags():
     tags = Tag.query.all()
     return jsonify({'tags': map(make_public_tag, tags)})
 
+# Show tag by id
 @app.route('/assured/api/v1.0/tags/<int:tag_id>', methods=['GET'])
 def get_tag(tag_id):
     tag = Tag.query.get(tag_id)
@@ -24,6 +25,7 @@ def get_tag(tag_id):
         abort(404)
     return jsonify({'tag': make_public_tag(tag)})
 
+# Show tag by NFC UID
 @app.route('/assured/api/v1.0/tags/auth', methods=['GET'])
 def auth():
     if not request.json:
@@ -35,13 +37,14 @@ def auth():
         abort(404)
     return jsonify({'tag': make_public_tag(tag)})
 
+# Add tag
 @app.route('/assured/api/v1.0/tags', methods=['POST'])
 def create_tag():
     if not request.json or 'uid' not in request.json or 'name' not in request.json:
         abort(400)
     if not isinstance(request.json['name'], (str, unicode)):
         abort(400)
-    if 'access_room1' in request.json and not isinstance(request.json['access_room1'], bool):
+    if 'access_room1' not in request.json or not isinstance(request.json['access_room1'], bool):
         abort(400)
     tag = Tag(
         name = request.json['name'],
@@ -53,6 +56,7 @@ def create_tag():
     db.session.commit()
     return jsonify({'tag': make_public_tag(Tag.query.get(tag.id))}), 201
 
+# Update tag
 @app.route('/assured/api/v1.0/tags/<int:tag_id>', methods=['PUT'])
 def update_tag(tag_id):
     tag = Tag.query.get(tag_id)
@@ -75,6 +79,7 @@ def update_tag(tag_id):
     db.session.commit()
     return jsonify({'tag': make_public_tag(tag)})
 
+# Delete tag
 @app.route('/assured/api/v1.0/tags/<int:tag_id>', methods=['DELETE'])
 def delete_tag(tag_id):
     tag = Tag.query.get(tag_id)
