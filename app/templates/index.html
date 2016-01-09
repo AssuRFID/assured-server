@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html ng-app="assuredWeb">
+  <head>
+	<title>Assured Web Admin</title>
+
+	<link rel="stylesheet" href="static/lib/bootstrap-3.3.6-dist/css/bootstrap.css">
+
+	<script src="static/lib/jquery-1.11.3.js"></script>
+	<script src="static/lib/bootstrap-3.3.6-dist/js/bootstrap.js"></script>
+	<script src="static/lib/angular.js"></script>
+	<script src="static/lib/angular-resource.js"></script>
+	<script src="static/lib/angular-route.js"></script>
+	<script src="static/controllers.js"></script>
+	<script src="static/services.js"></script>
+	<script src="static/app.js"></script>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+  </head>
+  <body>
+	<nav class="navbar navbar-default">
+	  <div class="container-fluid">
+		<div class="navbar-header">
+		  <a class="navbar-brand" href="#/tags">Assured Web Admin Interface</a>
+		</div>
+	  </div>
+	</nav>
+	<div ng-view></div>
+  </body>
+</html>

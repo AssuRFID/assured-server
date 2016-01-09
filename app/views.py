@@ -1,5 +1,6 @@
+import json
 from app import app, db
-from flask import jsonify, abort, make_response, request, url_for
+from flask import jsonify, abort, make_response, request, url_for, render_template, Response
 
 from .models import Tag
 
@@ -11,11 +12,18 @@ def make_public_tag(tag):
         new_tag[field] = tag.serialise[field]
     return new_tag
 
+# Web admin frontend
+@app.route('/')
+@app.route('/index.html')
+@app.route('/index')
+def index():
+    return render_template('index.html')
+
 # List tags
 @app.route('/assured/api/v1.0/tags', methods=['GET'])
 def get_tags():
     tags = Tag.query.all()
-    return jsonify({'tags': map(make_public_tag, tags)})
+    return Response(json.dumps(map(make_public_tag, tags)), mimetype='application/json')
 
 # Show tag by id
 @app.route('/assured/api/v1.0/tags/<int:tag_id>', methods=['GET'])
@@ -23,7 +31,7 @@ def get_tag(tag_id):
     tag = Tag.query.get(tag_id)
     if tag == None:
         abort(404)
-    return jsonify({'tag': make_public_tag(tag)})
+    return jsonify(make_public_tag(tag))
 
 # Show tag by NFC UID
 @app.route('/assured/api/v1.0/tags/auth', methods=['GET'])
@@ -35,7 +43,7 @@ def auth():
     tag = Tag.query.filter_by(uid=request.json['uid']).first()
     if tag is None:
         abort(404)
-    return jsonify({'tag': make_public_tag(tag)})
+    return jsonify(make_public_tag(tag))
 
 # Add tag
 @app.route('/assured/api/v1.0/tags', methods=['POST'])
@@ -54,7 +62,7 @@ def create_tag():
     )
     db.session.add(tag)
     db.session.commit()
-    return jsonify({'tag': make_public_tag(Tag.query.get(tag.id))}), 201
+    return jsonify(make_public_tag(Tag.query.get(tag.id))), 201
 
 # Update tag
 @app.route('/assured/api/v1.0/tags/<int:tag_id>', methods=['PUT'])
@@ -77,7 +85,7 @@ def update_tag(tag_id):
     tag.access_room1 = request.json.get('access_room1', tag.access_room1)
     tag.inside_room1 = request.json.get('inside_room1', tag.inside_room1)
     db.session.commit()
-    return jsonify({'tag': make_public_tag(tag)})
+    return jsonify(make_public_tag(tag))
 
 # Delete tag
 @app.route('/assured/api/v1.0/tags/<int:tag_id>', methods=['DELETE'])

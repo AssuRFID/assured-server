@@ -1,0 +1,83 @@
+<div class="container-fluid">
+	<div class="col-md-4 col-sm-6">
+	  <input ng-model="query.name" type="text" class="form-control" placeholder="Search">
+	</div>
+
+	<div class="col-md-12 col-sm-12">
+	  <table class="table table-hover">
+		<tr>
+		  <th>id</th>
+		  <th>Name</th>
+		  <th>UID</th>
+		  <th>Allowed in?</th>
+		  <th>Inside room?</th>
+		  <th>Edit</th>
+		</tr>
+		<tr ng-repeat="tag in tags | filter:query">
+		  <td>[[tag.id]]</td>
+		  <td>[[tag.name]]</td>
+		  <td>[[tag.uid]]</td>
+		  <td ng-if="tag.access_room1" class="success">Yes</td>
+		  <td ng-if="!tag.access_room1" class="danger">No</td>
+		  <td ng-if="tag.inside_room1" class="success">Yes</td>
+		  <td ng-if="!tag.inside_room1" class="danger">No</td>
+		  <td>
+			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal" ng-click="onEdit($index);">Edit</button>
+			<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" ng-click="onEdit($index);">Delete</button>
+		  </td>
+		</tr>
+	  </table>
+	</div>
+</div>
+
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal">&times;</button>
+		<h4 class="modal-title">Edit tag</h4>
+	  </div>
+	  <div class="modal-body">
+		<div class="form-group">
+		  <label for="newName">Name:</label>
+		  <input ng-model="editedTag.name" type="text" class="form-control" id="newName" placeholder="[[editedTag.name]]">
+		  <label>UID:</label><br>
+		  [[editedTag.uid]]<br>
+		  <div class="checkbox">
+			<label>
+			  <input ng-model="editedTag.access_room1" type="checkbox"> Allowed into room
+			</label>
+		  </div>
+		</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="saveEdit();">Save changes</button>
+	  </div>
+	</div>
+  </div>
+</div>
+  
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal">&times;</button>
+		<h4 class="modal-title">Delete tag?</h4>
+	  </div>
+	  <div class="modal-body">
+		<div class="form-group">
+		  <label>Name:</label>
+		  [[editedTag.name]]<br>
+		  <label>UID:</label>
+		  [[editedTag.uid]]<br>
+		  <p class="bg-warning" style="padding: 6px">You are about to completely remove this tag from the database. Are you sure?</p>
+		</div>
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		<button type="button" class="btn btn-danger" data-dismiss="modal" ng-click="deleteTag();">Delete tag</button>
+	  </div>
+	</div>
+  </div>
+</div>
