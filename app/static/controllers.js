@@ -4,7 +4,7 @@ assuredWebControllers.controller('TagListCtrl', function($scope, Tag) {
   json = Tag.query();
   $scope.tags = json;
   $scope.onEdit = function(index) {
-	$scope.editedTag = Object.assign({}, $scope.tags[index]);
+	$scope.editedTag = angular.extend({}, $scope.tags[index]);
 	$scope.editedTagIndex = index;
 	$scope.editedTagId = $scope.tags[index].id;
   }
